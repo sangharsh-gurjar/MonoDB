@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SetData">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/StudentId"
+        android:hint="enter id"
+        android:text=""
+        android:layout_marginTop="20dp"
+        ></EditText>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/StudentName"
+        android:hint="enter Name"
+        android:text=""
+        android:layout_marginTop="20dp"
+        ></EditText>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/StudentAddress"
+        android:hint="enter address"
+        android:text=""
+        android:layout_marginTop="20dp"
+        ></EditText>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/StudentEmail"
+        android:hint="enter Email"
+        android:text=""
+        android:layout_marginTop="20dp"
+        ></EditText>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_marginTop="40dp"
+        android:id="@+id/Submit"
+        ></Button>
+
+
+
+
+
+</LinearLayout>
