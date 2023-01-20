@@ -57,7 +57,7 @@ public class SetData extends AppCompatActivity {
 //                task1.setEmail(StudentEmail.getText().toString());
 
 
-                 // context, usually an Activity or Application
+                 // context/, usually an Activity or Application
                 app = new App(new AppConfiguration.Builder(appID)
                         .build());
                 Credentials credentials = Credentials.anonymous();
