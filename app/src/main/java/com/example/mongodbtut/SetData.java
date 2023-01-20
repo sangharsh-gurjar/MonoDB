@@ -8,15 +8,16 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import org.bson.Document;
 
 import io.realm.Realm;
 import io.realm.mongodb.App;
 import io.realm.mongodb.AppConfiguration;
 import io.realm.mongodb.Credentials;
 import io.realm.mongodb.User;
+import io.realm.mongodb.mongo.MongoClient;
+import io.realm.mongodb.mongo.MongoCollection;
+import io.realm.mongodb.mongo.MongoDatabase;
 import io.realm.mongodb.sync.SyncConfiguration;
 
 public class SetData extends AppCompatActivity {
@@ -29,12 +30,13 @@ public class SetData extends AppCompatActivity {
     App app;
     String appID ="application-0-tnijw";
     Task task1 = new Task("taskk");
+    MongoClient mongoClient;
+    MongoDatabase mongoDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_data);
-
 
         StudentId=findViewById(R.id.StudentId);
         StudentName=findViewById(R.id.StudentName);
@@ -50,9 +52,9 @@ public class SetData extends AppCompatActivity {
 
                // ObjectId _id = new ObjectId(StudentId.getText().toString());
                 //task1.set_id(_id);
-                task1.setName(StudentName.getText().toString());
-                task1.setAddress(StudentAddress.getText().toString());
-                task1.setEmail(StudentEmail.getText().toString());
+//                task1.setName(StudentName.getText().toString());
+//                task1.setAddress(StudentAddress.getText().toString());
+//                task1.setEmail(StudentEmail.getText().toString());
 
 
                  // context, usually an Activity or Application
@@ -63,16 +65,20 @@ public class SetData extends AppCompatActivity {
                     if (result.isSuccess()) {
                         Log.v("QUICKSTART", "Successfully authenticated anonymously.");
                         User user = app.currentUser();
-                        String partitionValue = "My Project";
-                        SyncConfiguration config = new SyncConfiguration.Builder(
-                                user,
-                                partitionValue)
-                                .build();
-                        uiThreadRealm = Realm.getInstance(config);
-                        //addChangeListenerToRealm(uiThreadRealm);
-                        FutureTask<String> task = new FutureTask(new BackgroundQuickStart(app.currentUser()) ,"test");
-                        ExecutorService executorService = Executors.newFixedThreadPool(2);
-                        executorService.execute(task);
+                        mongoClient = user.getMongoClient("mongobd-atlas");
+                        mongoDatabase=mongoClient.getDatabase("Student");
+                        MongoCollection<Document> mongoCollection= mongoDatabase.getCollection("Student1");
+                        mongoCollection.insertOne(new Document("userId",user.getId()).append("name",StudentName.getText().toString())
+                                .append("email",StudentEmail.getText().toString()).append("address",StudentAddress.getText().toString()))
+                                .getAsync(result1 -> {
+                            if (result1.isSuccess()){
+                                Log.v("DATABASE", "Inserted Successfully");
+                            }
+                            else{
+                                Log.v("DATABASE--", result1.getError().toString());
+                            }
+                        });
+
                     } else {
                         Log.e("QUICKSTART", "Failed to log in. Error: " + result.getError());
                     }

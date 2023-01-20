@@ -27,7 +27,9 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
 
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
+
         Task t=data[position];
+
         holder.SName.setText(t.getName());
         holder.SEmail.setText(t.getEmail());
         holder.SAddress.setText(t.getAddress());

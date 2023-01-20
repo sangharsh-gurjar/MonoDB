@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/SName"
+        android:text="khali"
         android:textSize="25dp"
         android:layout_marginTop="5dp" />
 
@@ -19,11 +20,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/SAddress"
         android:textSize="25dp"
+        android:text="khali"
         android:layout_marginTop="5dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="khali"
         android:id="@+id/SEmail"
         android:textSize="25dp"
         android:layout_marginTop="5dp" />

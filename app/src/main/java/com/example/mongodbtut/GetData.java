@@ -7,16 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import org.bson.Document;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.mongodb.App;
 import io.realm.mongodb.AppConfiguration;
 import io.realm.mongodb.Credentials;
+import io.realm.mongodb.RealmResultTask;
 import io.realm.mongodb.User;
+import io.realm.mongodb.mongo.MongoClient;
+import io.realm.mongodb.mongo.MongoCollection;
+import io.realm.mongodb.mongo.MongoDatabase;
+import io.realm.mongodb.mongo.iterable.MongoCursor;
 import io.realm.mongodb.sync.SyncConfiguration;
 
 public class GetData extends AppCompatActivity {
@@ -26,6 +29,8 @@ public class GetData extends AppCompatActivity {
     RecyclerView StudentList;
     Task []data;
     boolean dataFetched =false;
+    MongoClient mongoClient;
+    MongoDatabase mongoDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +48,49 @@ public class GetData extends AppCompatActivity {
             if (result.isSuccess()) {
                 Log.v("QUICKSTART", "Successfully authenticated anonymously.");
                 User user = app.currentUser();
-                String partitionValue = "My Project";
-                SyncConfiguration config = new SyncConfiguration.Builder(
-                        user,
-                        partitionValue)
-                        .build();
-                uiThreadRealm = Realm.getInstance(config);
-                //addChangeListenerToRealm(uiThreadRealm);
-                FutureTask<String> task = new FutureTask(new GetData.BackgroundQuickStart(app.currentUser()), "test");
-                ExecutorService executorService = Executors.newFixedThreadPool(2);
-                executorService.execute(task);
+                mongoClient = user.getMongoClient("mongobd-atlas");
+                mongoDatabase=mongoClient.getDatabase("Student");
+                MongoCollection<Document> mongoCollection= mongoDatabase.getCollection("Student1");
+                Document queryFilter = new Document().append("userId",user.getId());
+                RealmResultTask<MongoCursor<Document>> findTask = mongoCollection.find(queryFilter).iterator();
+                findTask.getAsync(result1->{
+                    if(result1.isSuccess()){
+                        int i=0;
+
+                        MongoCursor<Document>results= result1.get();
+                        while(results.hasNext()) {
+                            Document document = results.next();
+                            //results.next();
+                            i++;
+                        }
+                        MongoCursor<Document>results1= result1.get();
+                        int n=i;
+                        i=0;
+                        data=new Task[n-1];
+
+                        while(results1.hasNext()){
+                            Document document=results1.next();
+                            //results1.next();
+                            if(document.getString("name")!=null){
+                                data[i].setName(document.getString("name"));
+                            }
+                            if(document.getString("email")!=null){
+                                data[i].setEmail(document.getString("email"));
+                            }
+                            if(document.getString("address")!=null){
+                                data[i].setAddress(document.getString("address"));
+                            }
+                            i++;
+
+                        }
+                        StudentList.setAdapter(new StudentAdapter(data));
+
+                    }
+                    else{
+                        Log.v("DATABASE","failed to fetch data "+result1.getError());
+
+                    }
+                });
             } else {
                 Log.e("QUICKSTART", "Failed to log in. Error: " + result.getError());
             }
